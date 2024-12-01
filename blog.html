@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>My First Blog</title>
+
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <link rel="stylesheet" href="./assets/css/blog.css" />
+
+    <script src="./assets/js/logic.js" defer></script>
+    <!-- <script src="./assets/js/form.js" defer></script> -->
+</head>
+
+<body>
+    <div class="container light" id="container">
+
+        <header>
+            <h1>My First Blog</h1>
+            <button id="back">Back</button>
+            <button id="toggle">Toggle Theme</button>
+        </header>
+
+        <main id="blogListContainer">
+            <h2>Blog Posts</h2>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 My First Blog</p>
+        </footer>
+    </div>
+
+    <script>
+        const toggle = document.getElementById("toggle");
+        const container = document.getElementById("container");
+        let mode = localStorage.getItem("mode") || "light";
+        container.className = mode;
+
+        toggle.addEventListener("click", () => {
+            mode = mode === "light" ? "dark" : "light";
+            container.className = mode;
+            localStorage.setItem("mode", mode);
+        });
+
+        const blogListContainer = document.getElementById("blogListContainer");
+
+        function renderBlogPosts() {
+            const posts = JSON.parse(localStorage.getItem("blogPosts")) || [];
+            blogListContainer.innerHTML = "";
+
+            if (posts.length === 0) {
+                const noPostsMessage = document.createElement("p");
+                noPostsMessage.textContent = "No blog posts yet...";
+                blogListContainer.appendChild(noPostsMessage);
+            } else {
+                posts.forEach(post => {
+                    const postElement = document.createElement("div");
+                    postElement.classList.add("blog-post");
+                    postElement.innerHTML = `
+                        <h2>${post.title}</h2>
+                        <p>${post.content}</p>
+                        <p><em>Posted by: ${post.username}</em></p>
+                    `;
+                    blogListContainer.appendChild(postElement);
+                });
+            }
+        }
+
+
+        function initializeLocalStorage() {
+            // Check if "blogPosts" exists in localStorage
+            if (!localStorage.getItem("blogPosts")) {
+                // If not, initialize it with an empty array
+                localStorage.setItem("blogPosts", JSON.stringify([]));
+            }
+        }
+
+        // Call initializeLocalStorage to ensure "blogPosts" is set up on page load
+        initializeLocalStorage();
+
+        document.getElementById("back").addEventListener("click", () => {
+            window.location.href = "index.html";
+        });
+
+        renderBlogPosts();
+    </script>
+</body>
+
+</html>
